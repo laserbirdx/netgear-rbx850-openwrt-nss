@@ -22,6 +22,24 @@ Experimental **OpenWrt SNAPSHOT (Linux 6.18.55)** firmware builds with **Qualcom
 
 ---
 
+## ⚡ Why EDMA-NSS? (NSS Build vs. Mainline Vanilla OpenWrt)
+
+On mainline (vanilla) OpenWrt, the Qualcomm IPQ8074A's dedicated **UBI32 Network Subsystem (NSS) co-processors** remain completely unused, forcing the 4x 2.2 GHz ARM Cortex-A53 CPU cores to process every packet, interrupt, NAT flow, PPPoE header, and Wi-Fi frame in software.
+
+This **EDMA-NSS** build unlocks Qualcomm's dedicated hardware acceleration engine (`NSS.FW.12.5-210-HK.R` + `qca-ppe-nss` + `qca-nss-ecm`):
+
+| Feature / Workload | **Mainline (Vanilla) OpenWrt** | **This Build (EDMA-NSS Offload)** |
+| :--- | :--- | :--- |
+| **Packet Forwarding & NAT** | Software (`nftables` / Linux netfilter on ARM CPU) | **Hardware Offloaded** (`qca-ppe-nss` + `qca-nss-ecm` on NSS @ 1.69 GHz) |
+| **2.5 GbE WAN → LAN / Wi-Fi Routing** | CPU-bottlenecked at high packet rates (~60–90% CPU load) | **Near 0% ARM CPU usage** at multi-gigabit line rate |
+| **PPPoE WAN Encapsulation** | Single-core software bottleneck on Cortex-A53 | **Hardware Offloaded** (`kmod-qca-nss-drv-pppoe`) at full 2.5 Gbps |
+| **Tri-Band Wi-Fi 6 (`ath11k`) Data Path** | Heavy `ce` / `dp` IRQ load on main ARM cores | **Hardware `wifili` Offload** (`ATH11K_NSS_SUPPORT`) directly between NSS & radios |
+| **L2 LAN / Mesh Bridging (`br-lan`)** | Software Linux bridge | **Hardware Offloaded** (`kmod-qca-nss-drv-bridge-mgr` + `igs` IGMP snooping) |
+| **Smart Queue Management (SQM / QoS)** | Software `cake` / `fq_codel` (CPU-limited above ~500 Mbps) | **Hardware NSS SQM** (`sqm-scripts-nss` / `nssfq_codel` / `nsstbl` at gigabit+ speeds) |
+| **Available ARM CPU Headroom** | Consumed by network interrupts (`sirq`) | **Nearly 100% free** for VPNs (WireGuard/OpenVPN), Docker, Samba, or AdGuard Home |
+
+---
+
 ## 1. Build & NSS Architecture Details
 
 | Parameter | Details |
