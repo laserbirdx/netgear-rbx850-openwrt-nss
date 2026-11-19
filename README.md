@@ -20,6 +20,11 @@ Experimental **OpenWrt SNAPSHOT (Linux 6.18.55)** firmware builds with **Qualcom
 > - The second UBI32 NSS core (`nss1` / Core 1) is currently marked `disabled` in the Device Tree (DTS) while dual-core stability on the `edma-nss` rework branch is being finalized.
 > - Flash at your own risk. Always keep [`nmrpflash`](https://github.com/jclehner/nmrpflash) ready for recovery.
 
+> 📖 **Looking for Complete Step-by-Step Flashing, `nmrpflash`, & Configuration Guides?**
+> Check out our dedicated device installation repositories:
+> - **[laserbirdx/netgear-rbr850-openwrt](https://github.com/laserbirdx/netgear-rbr850-openwrt)** — Complete OpenWrt installation, `nmrpflash` walkthrough, offline LuCI & stock recovery guide for the **Netgear Orbi RBR850 Router**.
+> - **[laserbirdx/netgear-rbs850-openwrt](https://github.com/laserbirdx/netgear-rbs850-openwrt)** — Complete OpenWrt installation, first-boot DHCP client setup & **Standalone Router Conversion** guide for the **Netgear Orbi RBS850 Satellite**.
+
 ---
 
 ## ⚡ Why EDMA-NSS? (NSS Build vs. Mainline Vanilla OpenWrt)
